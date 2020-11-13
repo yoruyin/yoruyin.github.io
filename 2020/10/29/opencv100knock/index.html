@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+
+  <meta name="description" content="环境1234python &#x3D;&#x3D; 3.7.9 (anaconda)numpy &#x3D;&#x3D; 1.19.1matplotlib &#x3D;&#x3D; 3.3.1opencv-python &#x3D;&#x3D; 4.4.0 问题Q1cv2.imread()按照$BGR$的顺序排列的 Q2 灰度化(Grayscale)灰度表示为：$Y&#x3D;0.2126R+0.7152G+0.0722B$ Q3 二值化(Thresholding)将灰度的阈值设置为1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="opencv100knock">
+<meta property="og:url" content="http://example.com/2020/10/29/opencv100knock/index.html">
+<meta property="og:site_name" content="yoruyoru">
+<meta property="og:description" content="环境1234python &#x3D;&#x3D; 3.7.9 (anaconda)numpy &#x3D;&#x3D; 1.19.1matplotlib &#x3D;&#x3D; 3.3.1opencv-python &#x3D;&#x3D; 4.4.0 问题Q1cv2.imread()按照$BGR$的顺序排列的 Q2 灰度化(Grayscale)灰度表示为：$Y&#x3D;0.2126R+0.7152G+0.0722B$ Q3 二值化(Thresholding)将灰度的阈值设置为1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/yoruyin/LearningCv100/blob/master/assert/Q43.jpg">
+<meta property="og:image" content="https://github.com/yoruyin/LearningCv100/blob/master/assert/Q43result.jpg">
+<meta property="article:published_time" content="2020-10-28T19:10:02.000Z">
+<meta property="article:modified_time" content="2020-11-13T10:11:49.492Z">
+<meta property="article:author" content="Yincircle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/yoruyin/LearningCv100/blob/master/assert/Q43.jpg">
+
+
+<link rel="canonical" href="http://example.com/2020/10/29/opencv100knock/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>opencv100knock | yoruyoru</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">yoruyoru</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Q1"><span class="nav-number">2.1.</span> <span class="nav-text">Q1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q2-%E7%81%B0%E5%BA%A6%E5%8C%96-Grayscale"><span class="nav-number">2.2.</span> <span class="nav-text">Q2 灰度化(Grayscale)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q3-%E4%BA%8C%E5%80%BC%E5%8C%96-Thresholding"><span class="nav-number">2.3.</span> <span class="nav-text">Q3 二值化(Thresholding)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q4-%E5%A4%A7%E6%B4%A5%E4%BA%8C%E5%80%BC%E5%8C%96%E7%AE%97%E6%B3%95-Otsu%E2%80%99s-Method"><span class="nav-number">2.4.</span> <span class="nav-text">Q4 大津二值化算法(Otsu’s Method)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q5-HSV%E5%8F%98%E6%8D%A2"><span class="nav-number">2.5.</span> <span class="nav-text">Q5 HSV变换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q6-%E5%87%8F%E8%89%B2%E5%A4%84%E7%90%86"><span class="nav-number">2.6.</span> <span class="nav-text">Q6 减色处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q7-%E5%B9%B3%E5%9D%87%E6%B1%A0%E5%8C%96-Average-Pooling"><span class="nav-number">2.7.</span> <span class="nav-text">Q7 平均池化(Average Pooling)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q8-%E6%9C%80%E5%A4%A7%E6%B1%A0%E5%8C%96-Max-Pooling"><span class="nav-number">2.8.</span> <span class="nav-text">Q8 最大池化(Max Pooling)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q9-%E9%AB%98%E6%96%AF%E6%BB%A4%E6%B3%A2-Gaussian-Filter"><span class="nav-number">2.9.</span> <span class="nav-text">Q9 高斯滤波(Gaussian Filter)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q10-%E4%B8%AD%E5%80%BC%E6%BB%A4%E6%B3%A2-Median-Filter"><span class="nav-number">2.10.</span> <span class="nav-text">Q10 中值滤波(Median Filter)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q11-%E5%9D%87%E5%80%BC%E6%BB%A4%E6%B3%A2"><span class="nav-number">2.11.</span> <span class="nav-text">Q11 均值滤波</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q12-Motion-Filter"><span class="nav-number">2.12.</span> <span class="nav-text">Q12 Motion Filter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q13-Max-Min-%E6%BB%A4%E6%B3%A2%E5%99%A8"><span class="nav-number">2.13.</span> <span class="nav-text">Q13 Max-Min 滤波器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q14-%E5%B7%AE%E5%88%86%E6%BB%A4%E6%B3%A2%E5%99%A8-Differential-Filter"><span class="nav-number">2.14.</span> <span class="nav-text">Q14 差分滤波器(Differential Filter)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q15-Sobel%E6%BB%A4%E6%B3%A2%E5%99%A8"><span class="nav-number">2.15.</span> <span class="nav-text">Q15 Sobel滤波器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q16-Prewitt%E6%BB%A4%E6%B3%A2%E5%99%A8"><span class="nav-number">2.16.</span> <span class="nav-text">Q16 Prewitt滤波器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q17-Laplacian%E6%BB%A4%E6%B3%A2%E5%99%A8"><span class="nav-number">2.17.</span> <span class="nav-text">Q17 Laplacian滤波器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q18-Emboss%E6%BB%A4%E6%B3%A2%E5%99%A8"><span class="nav-number">2.18.</span> <span class="nav-text">Q18 Emboss滤波器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q19-LoG%E6%BB%A4%E6%B3%A2%E5%99%A8"><span class="nav-number">2.19.</span> <span class="nav-text">Q19 LoG滤波器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Q41-43-Canny%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B"><span class="nav-number">2.20.</span> <span class="nav-text">Q41-43 Canny边缘检测</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Yincircle</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/29/opencv100knock/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Yincircle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yoruyoru">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          opencv100knock
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-28 19:10:02" itemprop="dateCreated datePublished" datetime="2020-10-28T19:10:02Z">2020-10-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-11-13 10:11:49" itemprop="dateModified" datetime="2020-11-13T10:11:49Z">2020-11-13</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python == <span class="number">3.7</span><span class="number">.9</span> (anaconda)</span><br><span class="line">numpy == <span class="number">1.19</span><span class="number">.1</span></span><br><span class="line">matplotlib == <span class="number">3.3</span><span class="number">.1</span></span><br><span class="line">opencv-python == <span class="number">4.4</span><span class="number">.0</span></span><br></pre></td></tr></table></figure>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><h5 id="Q1"><a href="#Q1" class="headerlink" title="Q1"></a>Q1</h5><p><code>cv2.imread()</code>按照$BGR$的顺序排列的</p>
+<h5 id="Q2-灰度化-Grayscale"><a href="#Q2-灰度化-Grayscale" class="headerlink" title="Q2 灰度化(Grayscale)"></a>Q2 灰度化(Grayscale)</h5><p>灰度表示为：$Y=0.2126R+0.7152G+0.0722B$</p>
+<h5 id="Q3-二值化-Thresholding"><a href="#Q3-二值化-Thresholding" class="headerlink" title="Q3 二值化(Thresholding)"></a>Q3 二值化(Thresholding)</h5><p>将灰度的阈值设置为128进行二值化</p>
+<script type="math/tex; mode=display">
+y= \left\{
+\begin{aligned} 
+&0   &(\text{if}\quad y < 128) \\ 
+&255 &(\text{else}) 
+\end{aligned} 
+\right.</script><h5 id="Q4-大津二值化算法-Otsu’s-Method"><a href="#Q4-大津二值化算法-Otsu’s-Method" class="headerlink" title="Q4 大津二值化算法(Otsu’s Method)"></a>Q4 大津二值化算法(Otsu’s Method)</h5><p>最大类间方差法，自动确定二值化中阈值的算法</p>
+<h5 id="Q5-HSV变换"><a href="#Q5-HSV变换" class="headerlink" title="Q5 HSV变换"></a>Q5 HSV变换</h5><p>HSV即色相(Hue)，饱和度(Saturation)，明度(Value)来表示色彩的一种方式。</p>
+<p>色相：将颜色使用$0^{\circ}$到$360^{\circ}$表示</p>
+<p>饱和度：色彩的纯度，饱和度越低颜色越黯淡($0\leq S&lt;1$)</p>
+<p>明度：色彩的明暗程度。数值越高越接近白色，数值越低越接近黑色($0\leq V&lt;1$)</p>
+<p>从$\text{RGB}$色彩表示转换到$\text{HSV}$色彩表示通过以下方式计算：</p>
+<p>$\text{RGB}$的取值范围为$[0, 1]$，令：</p>
+<script type="math/tex; mode=display">
+\text{Max}=\max(R,G,B)</script><script type="math/tex; mode=display">
+\text{Min}=\min(R,G,B)</script><p>色相： </p>
+<script type="math/tex; mode=display">
+H=\left\{\begin{aligned} &0&(\text{if}\ \text{Min}=\text{Max})\\&60\times \frac{G-R}{\text{Max}-\text{Min}}+60&(\text{if}\ \text{Min}=B)\\ &60\times \frac{B-G}{\text{Max}-\text{Min}}+180&(\text{if}\ \text{Min}=R)\\ &60\times \frac{R-B}{\text{Max}-\text{Min}}+300&(\text{if}\ \text{Min}=G) \end{aligned}
+\right.</script><p> 饱和度：</p>
+<script type="math/tex; mode=display">
+S=\text{Max}-\text{Min}</script><p>明度： </p>
+<script type="math/tex; mode=display">
+V=\text{Max}</script><p>从$\text{HSV}$色彩表示转换到$\text{RGB}$色彩表示通过以下方式计算:</p>
+<script type="math/tex; mode=display">
+C = S</script><script type="math/tex; mode=display">
+\ H' = \frac{H}{60}</script><script type="math/tex; mode=display">
+X = C\ (1 - |H' \mod 2 - 1|)</script><script type="math/tex; mode=display">
+\ (R,G,B)=(V-C)\times (1,1,1)+\left\{
+\begin{aligned}&(0, 0, 0) &(\text{if H is undefined})\\ &(C, X, 0) &(\text{if}\quad 0 \leq H' < 1)\\ &(X, C, 0) &(\text{if}\quad 1 \leq H' < 2)\\ &(0, C, X) &(\text{if}\quad 2 \leq H' < 3)\\ &(0, X, C) &(\text{if}\quad 3 \leq H' < 4)\\ &(X, 0, C) &(\text{if}\quad 4 \leq H' < 5)\\ &(C, 0, X) &(\text{if}\quad 5 \leq H' < 6) \end{aligned}\right.</script><h5 id="Q6-减色处理"><a href="#Q6-减色处理" class="headerlink" title="Q6 减色处理"></a>Q6 减色处理</h5><p>将图像的值从$256^{3}$压缩到$4^{3}$，将RGB的值只取$\{32,96,160,224\}$,这被称作色彩量化。</p>
+<h5 id="Q7-平均池化-Average-Pooling"><a href="#Q7-平均池化-Average-Pooling" class="headerlink" title="Q7 平均池化(Average Pooling)"></a>Q7 平均池化(Average Pooling)</h5><p>将图片按照固定大小网格分割，网格内的像素值取网格内所有像素的平均值。</p>
+<p>我们将这种把图片使用均等大小网格分割，并求网格内代表值的操作称为<strong>池化（Pooling）</strong>。</p>
+<p>池化操作是<strong>卷积神经网络（Convolutional Neural Network）</strong>中重要的图像处理方式。平均池化按照下式定义：</p>
+<script type="math/tex; mode=display">
+v=\frac{1}{|R|}\ \sum\limits_{i=1}^R\ v_i</script><h5 id="Q8-最大池化-Max-Pooling"><a href="#Q8-最大池化-Max-Pooling" class="headerlink" title="Q8 最大池化(Max Pooling)"></a>Q8 最大池化(Max Pooling)</h5><p>网格内的值不取平均值，而是取最大值进行池化操作</p>
+<h5 id="Q9-高斯滤波-Gaussian-Filter"><a href="#Q9-高斯滤波-Gaussian-Filter" class="headerlink" title="Q9 高斯滤波(Gaussian Filter)"></a>Q9 高斯滤波(Gaussian Filter)</h5><p>高斯滤波器是一种可以使图像<strong>平滑</strong>的滤波器，用于去除<strong>噪声</strong>。</p>
+<p>高斯滤波器将中心像素周围的像素按照高斯分布加权平均进行平滑化。这样的（二维）权值通常被称为<strong>卷积核（kernel）</strong>或者<strong>滤波器（filter）</strong>。</p>
+<p>由于图像的长宽可能不是滤波器大小的整数倍，因此我们需要在图像的边缘补$0$。这种方法称作<strong>Zero Padding</strong>。并且权值$g$（卷积核）要进行<a target="_blank" rel="noopener" href="https://blog.csdn.net/lz0499/article/details/54015150">归一化操作</a>（$\sum\ g = 1$）。</p>
+<p>按下面的高斯分布公式计算权值： <script type="math/tex">g(x,y,\sigma)=\frac{1}{2\ \pi\ \sigma^2}\ e^{-\frac{x^2+y^2}{2\ \sigma^2}}</script></p>
+<p>标准差$\sigma=1.3$的 $8-$近邻高斯滤波器如下： <script type="math/tex">K=\frac{1}{16}\cdot \left[ \begin{matrix} 1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{matrix} \right]</script></p>
+<h5 id="Q10-中值滤波-Median-Filter"><a href="#Q10-中值滤波-Median-Filter" class="headerlink" title="Q10 中值滤波(Median Filter)"></a>Q10 中值滤波(Median Filter)</h5><p>直接取 $8-$临近的中值输出，可以用来降噪。</p>
+<h5 id="Q11-均值滤波"><a href="#Q11-均值滤波" class="headerlink" title="Q11 均值滤波"></a>Q11 均值滤波</h5><p>直接取 $8-$临近的均值输出。</p>
+<h5 id="Q12-Motion-Filter"><a href="#Q12-Motion-Filter" class="headerlink" title="Q12 Motion Filter"></a>Q12 Motion Filter</h5><p>使用$3\times3$的Motion Filter进行滤波。</p>
+<p>Motion Filter取对角线方向的像素的平均值，像如下矩阵：</p>
+<script type="math/tex; mode=display">
+K=\left[ \begin{matrix} \frac{1}{3}&0&0\\ 0&\frac{1}{3}&0\\ 0 & 0& \frac{1}{3} \end{matrix} \right]</script><h5 id="Q13-Max-Min-滤波器"><a href="#Q13-Max-Min-滤波器" class="headerlink" title="Q13 Max-Min 滤波器"></a>Q13 Max-Min 滤波器</h5><p>使用网格内的最大值和最小值的差值对网格内像素重新赋值，用来<strong>边缘检测</strong>。</p>
+<p>边缘检测用于检测图像中的线，这种操作称为<strong>特征提取</strong>。</p>
+<p>边缘检测通常在<strong>灰度图像</strong>上进行。</p>
+<h5 id="Q14-差分滤波器-Differential-Filter"><a href="#Q14-差分滤波器-Differential-Filter" class="headerlink" title="Q14 差分滤波器(Differential Filter)"></a>Q14 差分滤波器(Differential Filter)</h5><p>纵向： </p>
+<script type="math/tex; mode=display">
+K=\left[ \begin{matrix} 0&-1&0\\ 0&1&0\\ 0&0&0 \end{matrix} \right]</script><p>横向： </p>
+<script type="math/tex; mode=display">
+K=\left[ \begin{matrix} 0&0&0\\ -1&1&0\\ 0&0&0 \end{matrix} \right]</script><h5 id="Q15-Sobel滤波器"><a href="#Q15-Sobel滤波器" class="headerlink" title="Q15 Sobel滤波器"></a>Q15 Sobel滤波器</h5><p>Sobel滤波器可以提取特定方向（纵向或横向）的边缘，滤波器按下式定义：</p>
+<p>纵向： </p>
+<script type="math/tex; mode=display">
+K=\left[ \begin{matrix} 1&2&1\\ 0&0&0\\ -1&-2&-1 \end{matrix} \right]</script><p>横向： </p>
+<script type="math/tex; mode=display">
+K=\left[ \begin{matrix} 1&0&-1\\ 2&0&-2\\ 1&0&-1 \end{matrix} \right]</script><h5 id="Q16-Prewitt滤波器"><a href="#Q16-Prewitt滤波器" class="headerlink" title="Q16 Prewitt滤波器"></a>Q16 Prewitt滤波器</h5><p>Prewitt滤波器是用于边缘检测的一种滤波器，使用下式定义：</p>
+<p>纵向： </p>
+<script type="math/tex; mode=display">
+K=\left[ \begin{matrix} -1&-1&-1\\ 0&0&0\\ 1&1&1 \end{matrix} \right]</script><p>横向： </p>
+<script type="math/tex; mode=display">
+K=\left[ \begin{matrix} -1&0&1\\ -1&0&1\\ -1&0&1 \end{matrix} \right]</script><h5 id="Q17-Laplacian滤波器"><a href="#Q17-Laplacian滤波器" class="headerlink" title="Q17 Laplacian滤波器"></a>Q17 Laplacian滤波器</h5><p>Laplacian滤波器是对图像亮度进行二次微分从而<strong>检测边缘</strong>的滤波器。</p>
+<p>卷积核是下面这样的： </p>
+<script type="math/tex; mode=display">
+K= \left[ \begin{matrix} 0&1&0\\ 1&-4&1\\ 0&1&0 \end{matrix} \right]</script><h5 id="Q18-Emboss滤波器"><a href="#Q18-Emboss滤波器" class="headerlink" title="Q18 Emboss滤波器"></a>Q18 Emboss滤波器</h5><p>Emboss滤波器可以使物体轮廓更加清晰，按照以下式子定义： </p>
+<script type="math/tex; mode=display">
+K= \left[ \begin{matrix} -2&-1&0\\ -1&1&1\\ 0&1&2 \end{matrix} \right]</script><h5 id="Q19-LoG滤波器"><a href="#Q19-LoG滤波器" class="headerlink" title="Q19 LoG滤波器"></a>Q19 LoG滤波器</h5><p>LoG即高斯-拉普拉斯（Laplacian of Gaussian）的缩写，使用高斯滤波器使图像平滑化之后再使用拉普拉斯滤波器使图像的轮廓更加清晰。用于<strong>边缘检测</strong>。</p>
+<p>LoG 滤波器使用以下式子定义： </p>
+<script type="math/tex; mode=display">
+\text{LoG}(x,y)=\frac{x^2 + y^2 - s^2}{2 \ \pi \ s^6} \ e^{-\frac{x^2+y^2}{2\ s^2}}</script><h5 id="Q41-43-Canny边缘检测"><a href="#Q41-43-Canny边缘检测" class="headerlink" title="Q41-43 Canny边缘检测"></a>Q41-43 Canny边缘检测</h5><p>Canny边缘检测法的理论介绍。</p>
+<ol>
+<li>使用高斯滤波；</li>
+<li>在 $x$ 方向和 $y$ 方向上使用Sobel滤波器，在此之上求出边缘的强度和边缘的梯度；</li>
+<li>对梯度幅值进行非极大值抑制（Non-maximum suppression）来使边缘变得更细；</li>
+<li>使用滞后阈值来对阈值进行处理。</li>
+</ol>
+<p>按照以下步骤进行处理：</p>
+<ol>
+<li>将图像进行灰度化处理；</li>
+<li>将图像进行高斯滤波（$5\times5$，$s=1.4$）；</li>
+<li>在$x$方向和$y$方向上使用Sobel滤波器，在此之上求出边缘梯度$f_x$和$f_y$。边缘梯度可以按照下式求得： <script type="math/tex">\text{edge}=\sqrt{ {f_x}^2+{f_x}^2}\ \text{tan}=\arctan(\frac{f_y}{f_x})</script></li>
+<li>使用下面的公式将梯度方向量化： <script type="math/tex">\text{angle}=\left\{\begin{aligned} &0  (\text{if}\quad -0.4142 < \tan \leq 0.4142)\\ &45  (\text{if}\quad 0.4142 < \tan < 2.4142)\\ &90 (\text{if}\quad |\tan| \geq 2.4142)\\ &135 (\text{if}\quad -2.4142 < \tan \leq -0.4142) \end{aligned}\right.</script></li>
+<li>我们比较我们我们所关注的地方梯度的法线方向邻接的三个像素点的梯度幅值，如果该点的梯度值不比其它两个像素大，那么这个地方的值设置为0。</li>
+<li>在这里我们将通过设置高阈值（HT：high threshold）和低阈值（LT：low threshold）来将梯度幅值二值化。</li>
+</ol>
+<p>效果：</p>
+<p><img src="https://github.com/yoruyin/LearningCv100/blob/master/assert/Q43.jpg" style="zoom:25%;" /></p>
+<p><img src="https://github.com/yoruyin/LearningCv100/blob/master/assert/Q43result.jpg" style="zoom:25%;" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/10/21/Start-to-learn-Tensorflow/" rel="prev" title="Start to learn Tensorflow">
+                  <i class="fa fa-chevron-left"></i> Start to learn Tensorflow
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/11/hello-world/" rel="next" title="Hello World">
+                  Hello World <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yincircle</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
